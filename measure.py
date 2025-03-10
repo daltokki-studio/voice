@@ -2,8 +2,8 @@ import librosa
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from IPython.display import Audio, display
-from scipy.signal import lfilter, freqz
+from IPython.display import display
+from scipy.signal import freqz
 
 class formant():
 
@@ -18,7 +18,7 @@ class formant():
                                                                     sr = self.sr,
                                                                     fmin = librosa.note_to_hz('C2'),
                                                                     fmax = librosa.note_to_hz('C7'))
-        self.M, self.F = self.get_F(self.s, self.sr, BWcutoff)
+        self.M, self.F, self.BW = self.get_F(self.s, self.sr, BWcutoff)
 
         display(self.table(self.f0, self.F))
         self.plot_F(self.s, self.sr, np.insert(self.F, 0, 0), self.M)
@@ -37,7 +37,7 @@ class formant():
 
         idx = [i for i in range(F.shape[0]) if (0 < F[i] < (sr/2)) & (BW[i] < BWcutoff)]
 
-        return M, F[idx]
+        return M, F[idx], BW[idx]
 
     def table(self, f0, F):
         data = [int(f) for f in np.insert(F, 0, np.nanmean(f0)) if f<5000]
